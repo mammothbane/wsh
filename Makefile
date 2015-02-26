@@ -8,13 +8,13 @@ ROBJS = $(patsubst %,$(OBJDIR)/%,$(_ROBJS))
 SRCDIR = src
 OBJDIR = objs
 
-$(OUT): $(OBJS)
+$(OUT): $(OBJS) $(ROBJS)
 	$(CC) $(CFLAGS) 
 
-$(ROBJS):
-	EXTRAFLAGS += -lreadline
+$(ROBJS): EXTRAFLAGS := -lreadline
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
+	@echo [Compile]: $<
 	$(CC) $(CFLAGS) $(EXTRAFLAGS) -c -o $@ $<
 
 
