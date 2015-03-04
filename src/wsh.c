@@ -9,7 +9,7 @@
 int main(int argc, char **argv) {
   char* line; //raw user input
   char** tokens; //input split/tokenized
-  while (line = readline("- ")) {
+  while ((line = readline("- "))) {
     tokens = parse(line);  
   }
 

@@ -9,15 +9,16 @@ SRCDIR = src
 OBJDIR = objs
 
 $(OUT): $(OBJS) $(ROBJS)
-	$(CC) $(CFLAGS) 
+	@echo [Compile]: $@
+	@$(CC) $(CFLAGS) $(OBJS) $(ROBJS) -o $(OUT) -lreadline
 
-$(ROBJS): EXTRAFLAGS := -lreadline
+$(ROBJS): EXTRAFLAGS = -lreadline
 
 $(OBJDIR)/%.o: $(SRCDIR)/%.c
-	@echo [Compile]: $<
-	$(CC) $(CFLAGS) $(EXTRAFLAGS) -c -o $@ $<
+	@echo [Compile]: $< \> $@ 
+	@$(CC) $(CFLAGS) -c -o $@ $< $(EXTRAFLAGS)
 
 
 .PHONY: clean
 clean:
-	rm -f $(OBJDIR)/*.o $(OUT)
+	@rm -f $(OBJDIR)/*.o $(OUT)
