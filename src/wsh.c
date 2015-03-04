@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "parser.h"
+#include <readline/readline.h>
+#include <readline/history.h>
 
 #define BUFFER 255
 #define PROMPT "$- "

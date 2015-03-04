@@ -1,14 +1,21 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-enum types {
-  
-}
+#define PS_FG 0x0
+#define PS_BG 0x1
+#define PS_PIPE 0x2
+#define PS_IN 0x4
+#define PS_OUT 0x8
 
-typedef struct command_t {
+typedef struct command {
   char **command, *in, *out; //text of the executable
-  
-} command;
+  char ps_type;
+} command_t;
+
+struct command_w {
+  command_t command;
+  int len;
+}
 
 char **parse(char*); //parse string read in 
 
