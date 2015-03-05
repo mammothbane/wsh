@@ -12,11 +12,8 @@ typedef struct command {
   char ps_type;
 } command_t;
 
-struct command_w {
-  command_t command;
-  int len;
-}
-
-char **parse(char*); //parse string read in 
+void parser_init();
+void parser_finalize();
+command_t *parse(char*); //parse string read in 
 
 #endif

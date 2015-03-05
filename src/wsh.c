@@ -7,15 +7,19 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 
-#define BUFFER 255
 #define PROMPT "$- "
 
 int main(int argc, char **argv) {
-  char* line = malloc(BUFFER); //raw user input
-  char** tokens; //input split/tokenized
+  parser_init();
+  char *line;
+  command_t *tokens; //input split/tokenized
   while ((line = readline("- "))) {
     tokens = parse(line);  
+    
+    
+    
   } 
 
+  parser_finalize();
   return 0;
 }
