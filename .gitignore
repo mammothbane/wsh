@@ -2,3 +2,4 @@ bin/*
 objs/*
 *~
 \#*\#
+test/wsh*.in

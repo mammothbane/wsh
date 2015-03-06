@@ -10,7 +10,6 @@
 #define PROMPT "$- "
 
 int main(int argc, char **argv) {
-  parser_init();
   char *line;
   command_t *tokens; //input split/tokenized
   while ((line = readline("- "))) {
@@ -20,6 +19,5 @@ int main(int argc, char **argv) {
     
   } 
 
-  parser_finalize();
   return 0;
 }

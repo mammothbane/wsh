@@ -6,112 +6,52 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-char *buffer;
-command_t *list;
-int lst_sz = 8;
-const int bsize = 32;
-
-static void cmd_addchar(command_t *cmd, int w_index, int c_index, char next);
-static void cmd_settype(command_t *cmd, char type);
-static void cmd_setinfile(command_t *cmd, char *in);
-static void cmd_setoutfile(command_t *cmd, char *out);
-
-void parser_init() {
-  buffer = malloc(128);
-  list = malloc(sizeof(command_t)*lst_sz);
-}
-
-void parser_finalize() {
-  free(buffer);
-  free(list);
-}
-
 //return list of commands terminated by 0x0
 command_t *parse(char *line) {
-  int i = 0, //command index in list 
-    j = 0,   //word index in command
-    k = 0;   //char index in word
-  command_t *cur;
   while (*line) {
-    list[i].command = calloc(sizeof(char**), 100); //fix this. dynamically reallocate if too many commands
-    cur = &list[i];
-    switch (*line) {
-    case ';':
-    case '\n':
-    case '#':
-      puts("\tend of foreground command");
-      cmd_settype(cur, PS_FG);
-      j = 0;
-      i++;
-      break;
-    case '&':
-      puts("\tend of background command");
-      cmd_settype(cur, PS_BG);
-      j = 0;
-      i++;
-      break;
-    case '|':
-      puts("\tend of piped command");
-      cmd_settype(cur, PS_PIPE);
-      j = 0;
-      i++;
-      break;
-    case '>':
-      puts("\texpecting output file");
-      cmd_settype(cur, PS_OUT);
-      break;
-    case '<':
-      puts("\texpecting input file");
-      cmd_settype(cur, PS_IN);
-      line++;
-      char* 
-      char* in = strsep(&line, "\n;&
-      int l = 0, tmp = bsize;      
-      char* in = malloc(tmp);
-      while (*line && *line != ' ') {
-	in[l] = *line;
-	if (l == bsize-1) in = realloc(bsize*=2);
-	line++;
-	l++;
-      }
-      break;
-    case ' ':
-      puts("\tencountered space. incrementing word.");
-      j++;
-      k = 0;
-      break;
-    default:
-      printf("\nline: %s\n", line);
-      cmd_addchar(cur, j, k, *line);
-      k++;
-      break;
-    } 
-    if (i == lst_sz - 1) {
-      lst_sz *= 2;
-      printf("reallocating list to %d bytes\n", lst_sz);
-      list = realloc(list, lst_sz*2*sizeof(command_t));
+    char *pt = strpbrk(line, ";\n#&|");
+    char div = (pt) ? *pt : 0;
+    char *com = (pt) ? strsep(&line, ";\n#&|") : line;
+    printf("com before io: '%s'\n", com);
+    //printf("a%s\n", com);
+    //char *ccom = strdup(com), *cinit = ccom;
+    while (*com) {
+      char *pt2 = strpbrk(com, "<>");
+      if (pt2) {
+	char io = *pt2;
+	char *pre = strsep(&com, "<>");
+	if (com[0] == ' ') com++;
+	char *file = strsep(&com, " ");
+	if (io == '<') {
+	  printf("\tinfile to '%s'\n", file);
+	  //set infile
+	} else {
+	  printf("\toutfile to '%s'\n", file);
+	  //set outfile
+	}
+	printf("\tprecat com: '%s', pre: '%s'\n", com, pre);
+	if (com) {
+	  com = strcat(pre, com);
+	  //com = strcat(strcat(pre, " "), com);
+	} else com = pre;
+	//printf(
+	printf("\tpost com: '%s'\n", com);
+      } else break;
     }
-    
-    line++;
+    printf("\tcom after io: '%s'\n", com);
+    //free(cinit);
+    if (!*com) break;
+    while (strpbrk(com, " ")) {
+      //      if (strpbrk(com, " ")) {
+      char *sep = strsep(&com, " ");
+      printf("\tencountered command: '%s'\n", sep);
+      //put pt3 into command
+      //printf("%s\n", sep);
+      //} else break;
+    }
+    printf("\tlast command: '%s'\n", com);
+    sleep(1);
+    if (!div) break;
+    //printf("div: '%s'\n", div ? "present" : "not present");
   }
-  
-} 
-
-//inline?
-			   
-void cmd_addchar(command_t *cmd, int w_index, int c_index, char c) {
-  
-}
-
-
-void cmd_settype(command_t *cmd, char c) {
-  cmd->ps_type ^= !c;
-}
-
-void cmd_setinfile(command_t *cmd, char *file) {
-  
-}
-
-void cmd_setoutfile(command_t *cmd, char *file) {
-  
 }
