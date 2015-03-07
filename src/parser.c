@@ -58,7 +58,7 @@ command_t *parse(char *line) {
     //free(cinit);
     if (!*com) break;
     int sz = 8, i = 0;
-    cmd->command = malloc(sizeof(void*)*sz);
+    cmd->command = calloc(sizeof(void*)*sz, 1);
     while (strpbrk(com, " ")) {
       //debug_print("\tcom: '%s'\n", com);
       char *sep = strsep(&com, " ");
