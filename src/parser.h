@@ -1,11 +1,11 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#define PS_FG 0x0
-#define PS_BG 0x1
-#define PS_PIPE 0x2
-#define PS_IN 0x4
-#define PS_OUT 0x8
+extern const char PS_FG,
+  PS_BG,
+  PS_PIPE,
+  PS_IN,
+  PS_OUT;
 
 typedef struct command {
   char **command, *in, *out; //text of the executable

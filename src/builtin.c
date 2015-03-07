@@ -19,7 +19,11 @@ int builtin(command_t *cmd) {
   else if (!strcmp(nm, "cd")) {
     return BUILTIN_CD;
   } else if (!strcmp(nm, "help")) {
-    
+    puts("builtin commands:\n\thelp\tthis help page");
+    puts("\tjobs\tlist all running jobs");
+    puts("\tkill\tkill a job");
+    puts("\tcd\tchange directory");
+    puts("\texit\texit the shell");  
     return BUILTIN_OTHER;
   } else if (!strcmp(nm, "jobs")) {
     

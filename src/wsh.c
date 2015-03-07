@@ -28,8 +28,9 @@ int main(int argc, char **argv) {
 
 	}
 
-	list = list->next;
-      } while (list);
+	if (list->next) list = list->next;
+	else break;
+      } while (1);
     }    
   } 
 

@@ -7,7 +7,11 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define _BSD_SOURCE
+const char PS_FG = 0x0,
+  PS_BG = 0x1,
+  PS_PIPE = 0x2,
+  PS_IN = 0x4,
+  PS_OUT = 0x8;
 
 //return list of commands terminated by 0x0
 command_t *parse(char *line) {
@@ -16,9 +20,9 @@ command_t *parse(char *line) {
     char *pt = strpbrk(line, ";\n#&|");
     char div = (pt) ? *pt : 0;
     if (cmd) { 
-      cmd->next = malloc(sizeof(command_t));
+      cmd->next = calloc(sizeof(command_t), 1);
       cmd = cmd->next;
-    } else head = cmd = malloc(sizeof(command_t));
+    } else head = cmd = calloc(sizeof(command_t), 1);
     char *com = (pt) ? strsep(&line, ";\n#&|") : line;
     debug_print("com before io: '%s'\n", com);
     //printf("a%s\n", com);
