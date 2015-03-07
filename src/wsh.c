@@ -1,9 +1,10 @@
 // the williams shell
 // (c) 2015 nathan m perry
 
+#include "parser.h"
+#include "builtin.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "parser.h"
 #include <readline/readline.h>
 #include <readline/history.h>
 
@@ -11,12 +12,25 @@
 
 int main(int argc, char **argv) {
   char *line;
-  command_t *tokens; //input split/tokenized
+  command_t *list;
   while ((line = readline("- "))) {
-    tokens = parse(line);  
-    
-    
-    
+    list = parse(line);  
+    if (list && list->command[0]) {
+      do {
+	int bi = builtin(list);
+	if (bi == BUILTIN_EXIT) {
+	  exit((list->command[1] ? atoi(list->command[1]) : 0));
+	} else if (bi == BUILTIN_CD) {
+	  
+	} else if (bi == BUILTIN_OTHER) {
+
+	} else {
+
+	}
+
+	list = list->next;
+      } while (list);
+    }    
   } 
 
   return 0;

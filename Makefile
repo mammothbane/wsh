@@ -1,7 +1,7 @@
 CC=gcc
 CFLAGS=-Wall -g
 OUT=bin/wsh
-_OBJS = parser.o
+_OBJS = parser.o builtin.o
 _ROBJS = wsh.o
 OBJS = $(patsubst %,$(OBJDIR)/%,$(_OBJS))
 ROBJS = $(patsubst %,$(OBJDIR)/%,$(_ROBJS))

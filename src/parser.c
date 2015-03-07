@@ -7,6 +7,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#define _BSD_SOURCE
+
 //return list of commands terminated by 0x0
 command_t *parse(char *line) {
   command_t *head = 0, *cmd = 0;
@@ -88,4 +90,9 @@ command_t *parse(char *line) {
     } else break;
   }
   return head;
+}
+
+void cmd_free(command_t *cmd) {
+  
+  
 }

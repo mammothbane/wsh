@@ -14,5 +14,6 @@ typedef struct command {
 } command_t;
 
 command_t *parse(char*); //parse string read in 
+void cmd_free(command_t*);
 
 #endif
