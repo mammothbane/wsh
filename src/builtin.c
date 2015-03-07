@@ -1,11 +1,7 @@
 //idenfity and execute commands
 //(c) 2015 nathan m perry
 
-#include "parser.h"
 #include "builtin.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 
 const int NOT_BUILTIN = 0x0,
   BUILTIN_EXIT = 0x1,

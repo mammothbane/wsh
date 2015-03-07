@@ -2,10 +2,6 @@
 // (c) 2015 nathan m perry
 
 #include "parser.h"
-#include "debug.h"
-#include <string.h>
-#include <stdlib.h>
-#include <stdio.h>
 
 const char PS_FG = 0x0,
   PS_BG = 0x1,

@@ -1,15 +1,7 @@
 // the williams shell
 // (c) 2015 nathan m perry
 
-#include "parser.h"
-#include "builtin.h"
-#include "executor.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <readline/readline.h>
-#include <readline/history.h>
-#include <sys/types.h>
-#include <sys/wait.h>
+#include "wsh.h"
 
 #define PROMPT "$ - "
 

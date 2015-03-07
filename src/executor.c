@@ -1,13 +1,7 @@
 //run standard commands
 //(c) 2015 nathan m perry
 
-#include "parser.h"
 #include "executor.h"
-#include "debug.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <unistd.h>
-#include <errno.h>
 
 int execute(command_t *command) {
   //pre: command not null, valid first entry
