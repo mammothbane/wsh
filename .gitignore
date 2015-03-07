@@ -5,4 +5,4 @@ objs/*
 test/*
 !test/*.c
 !test/*.wsh
-!test/bin/*
+!test/Makefile
