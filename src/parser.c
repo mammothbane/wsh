@@ -2,17 +2,23 @@
 // (c) 2015 nathan m perry
 
 #include "parser.h"
+#include "debug.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 
 //return list of commands terminated by 0x0
 command_t *parse(char *line) {
+  command_t *head, *cmd;
   while (*line) {
+    if (cmd) { 
+      cmd->next = malloc(sizeof(command_t));
+      cmd = cmd->next;
+    } else head = cmd = malloc(sizeof(command_t));
     char *pt = strpbrk(line, ";\n#&|");
     char div = (pt) ? *pt : 0;
     char *com = (pt) ? strsep(&line, ";\n#&|") : line;
-    printf("com before io: '%s'\n", com);
+    debug_print("com before io: '%s'\n", com);
     //printf("a%s\n", com);
     //char *ccom = strdup(com), *cinit = ccom;
     while (*com) {
@@ -23,35 +29,63 @@ command_t *parse(char *line) {
 	if (com[0] == ' ') com++;
 	char *file = strsep(&com, " ");
 	if (io == '<') {
-	  printf("\tinfile to '%s'\n", file);
 	  //set infile
+	  debug_print("\tinfile to '%s'\n", file);
+	  cmd->in = strdup(file);
+	  cmd->ps_type |= PS_IN;
 	} else {
-	  printf("\toutfile to '%s'\n", file);
 	  //set outfile
+	  debug_print("\toutfile to '%s'\n", file);
+	  cmd->out = strdup(file);
+	  cmd->ps_type |= PS_OUT;
 	}
-	printf("\tprecat com: '%s', pre: '%s'\n", com, pre);
+	debug_print("\tprecat com: '%s', pre: '%s'\n", com, pre);
 	if (com) {
 	  com = strcat(pre, com);
 	  //com = strcat(strcat(pre, " "), com);
 	} else com = pre;
 	//printf(
-	printf("\tpost com: '%s'\n", com);
+	debug_print("\tpost com: '%s'\n", com);
       } else break;
     }
-    printf("\tcom after io: '%s'\n", com);
+    debug_print("\tcom after io: '%s'\n", com);
     //free(cinit);
     if (!*com) break;
+    int sz = 8, i = 0;
+    cmd->command = malloc(sizeof(void*)*sz);
     while (strpbrk(com, " ")) {
-      //      if (strpbrk(com, " ")) {
       char *sep = strsep(&com, " ");
-      printf("\tencountered command: '%s'\n", sep);
-      //put pt3 into command
-      //printf("%s\n", sep);
-      //} else break;
+      if (*sep) {
+	debug_print("\tencountered command: '%s'\n", sep);
+	cmd->command[i] = strdup(sep);
+	i++;
+	if (i == sz - 1) {
+	  sz *= 2;
+	  cmd->command = realloc(cmd->command, sz*sizeof(void*));
+	  debug_print("\targv length ->  %d\n", sz);
+	}
+      }
     }
-    printf("\tlast command: '%s'\n", com);
-    sleep(1);
-    if (!div) break;
+    if (*com) {
+      debug_print("\tlast command: '%s'\n", com);
+      cmd->command[i] = strdup(com);
+    }
+    if (div) {
+      switch (div) {
+      case '\n':
+      case ';':
+      case '#':
+	cmd->ps_type &= ~PS_BG;
+	break;
+      case '&':
+	cmd->ps_type |= PS_BG;
+	break;
+      case '|':
+	cmd->ps_type |= PS_PIPE;
+	break;
+      }      
+    } else break;
     //printf("div: '%s'\n", div ? "present" : "not present");
   }
+  return head;
 }

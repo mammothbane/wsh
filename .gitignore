@@ -2,4 +2,7 @@ bin/*
 objs/*
 *~
 \#*\#
-test/wsh*.in
+test/*
+!test/*.c
+!test/*.wsh
+!test/bin/*

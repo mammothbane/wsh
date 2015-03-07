@@ -10,10 +10,9 @@
 typedef struct command {
   char **command, *in, *out; //text of the executable
   char ps_type;
+  struct command *next;
 } command_t;
 
-void parser_init();
-void parser_finalize();
 command_t *parse(char*); //parse string read in 
 
 #endif
