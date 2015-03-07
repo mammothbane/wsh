@@ -3,7 +3,10 @@
 
 #include "redirect.h"
 
-int fdout(command_t *command) {
-  
+fdpair fd_open(command_t *cmd) {
+    
+}
 
+int fd_close(fdpair pair) {
+  
 }

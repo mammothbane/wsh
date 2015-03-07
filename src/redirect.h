@@ -3,8 +3,11 @@
 
 #include "debug.h"
 #include "command.h"
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/fcntl.h>
 
-int fdout(command_t*);
-int fdin(command_t*);
+fdpair fd_open(command_t*);
+int fd_close(fdpair);
 
 #endif

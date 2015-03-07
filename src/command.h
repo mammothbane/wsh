@@ -13,4 +13,8 @@ typedef struct command {
   struct command *next;
 } command_t;
 
+typedef struct fdpair {
+  int in, out;
+} fdpair;
+
 #endif
