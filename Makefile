@@ -29,5 +29,6 @@ test:
 .PHONY: clean
 clean:
 	@rm -f $(OBJDIR)/*.o $(OUT) $(OBJDIR)/*.d
+	@cd $(TESTDIR); make $(MFLAGS) clean
 
 -include $(OBJS:.o=.d) $(ROBJS:.o=.d)

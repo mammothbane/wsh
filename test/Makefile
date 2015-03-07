@@ -13,10 +13,12 @@ TESTS =
 
 test: $(TESTS) $(RTESTS)
 
-.PHONY: parsetest
 ptest: bin/parsetest
 	@bin/parsetest
 	@echo [Passed]'\t'parsetest
+
+.PHONY: parsetest
+parsetest: bin/parsetest
 
 bin/parsetest: parsetest.c $(SRCDIR)/parser.c $(SRCDIR)/parser.h $(SRCDIR)/debug.h
 	@echo [Compile]'\t'$< \> $@

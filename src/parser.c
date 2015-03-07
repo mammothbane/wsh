@@ -9,14 +9,14 @@
 
 //return list of commands terminated by 0x0
 command_t *parse(char *line) {
-  command_t *head, *cmd;
+  command_t *head = 0, *cmd = 0;
   while (*line) {
+    char *pt = strpbrk(line, ";\n#&|");
+    char div = (pt) ? *pt : 0;
     if (cmd) { 
       cmd->next = malloc(sizeof(command_t));
       cmd = cmd->next;
     } else head = cmd = malloc(sizeof(command_t));
-    char *pt = strpbrk(line, ";\n#&|");
-    char div = (pt) ? *pt : 0;
     char *com = (pt) ? strsep(&line, ";\n#&|") : line;
     debug_print("com before io: '%s'\n", com);
     //printf("a%s\n", com);
@@ -54,6 +54,7 @@ command_t *parse(char *line) {
     int sz = 8, i = 0;
     cmd->command = malloc(sizeof(void*)*sz);
     while (strpbrk(com, " ")) {
+      //debug_print("\tcom: '%s'\n", com);
       char *sep = strsep(&com, " ");
       if (*sep) {
 	debug_print("\tencountered command: '%s'\n", sep);
@@ -85,7 +86,6 @@ command_t *parse(char *line) {
 	break;
       }      
     } else break;
-    //printf("div: '%s'\n", div ? "present" : "not present");
   }
   return head;
 }
