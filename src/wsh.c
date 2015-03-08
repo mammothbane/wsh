@@ -23,7 +23,6 @@ int main(int argc, char **argv) {
 	  fdpair fds = fd_open(list);
 	  int status, pid = execute(list);
 	  wait(&status);
-	  printf("got to post-wait\n");
 	  fd_close(fds);
 	}
 

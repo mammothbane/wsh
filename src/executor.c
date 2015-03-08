@@ -9,9 +9,9 @@ int execute(command_t *command) {
   if (!pid) {
     debug_print("executing %s\n", command->command[0]);
     fdpair pair = fd_open(command);
-    printf("in: %d, out:%d\n", pair.in, pair.out);
-    dup2(pair.in, 0);
-    dup2(pair.out, 1);
+    debug_print("in: %d, out:%d\n", pair.in, pair.out);
+    if (pair.in) dup2(pair.in, 0);
+    if (pair.out) dup2(pair.out, 1);
     execvp(command->command[0], command->command);
     //debug_print("errno is: %d\n", errno);
     int err = errno;
