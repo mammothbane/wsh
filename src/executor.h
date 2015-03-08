@@ -7,6 +7,7 @@
 #include <errno.h>
 #include "command.h"
 #include "debug.h"
+#include "redirect.h"
 
 int execute(command_t*);
 

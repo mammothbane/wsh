@@ -10,7 +10,7 @@ int main(int argc, char **argv) {
   command_t *list;
   while ((line = readline(PROMPT))) {
     list = parse(line);  
-    if (list && list->command[0]) {
+    if (list && list->command) {
       do {
 	int bi = builtin(list);
 	if (bi == BUILTIN_EXIT) {
@@ -20,8 +20,11 @@ int main(int argc, char **argv) {
 	} else if (bi == BUILTIN_OTHER) {
 
 	} else {
+	  fdpair fds = fd_open(list);
 	  int status, pid = execute(list);
 	  wait(&status);
+	  printf("got to post-wait\n");
+	  fd_close(fds);
 	}
 
 	if (list->next) list = list->next;
