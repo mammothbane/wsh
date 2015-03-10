@@ -14,7 +14,9 @@ char* s1 = "",
   *s4 = "ls . > test.c",
   *s5 = "ls ; grep a",
   *s6 = "ls; grep a",
-  *s7 = ";";
+  *s7 = ";",
+  *s8 = "echo test | grep t",
+  *s9 = "echo; echo; echo";
 
 int main() {
   assert((void*)parse(strdup(s1)) == 0);
@@ -46,6 +48,16 @@ int main() {
   assert(!strcmp(cmd->next->command[1], "a"));
   assert(cmd->ps_type == PS_FG);
   assert(!parse(strdup(s7))->command);
-
+  cmd = parse(strdup(s8));
+  assert(cmd->next);
+  assert(cmd->ps_type & PS_PIPE);
+  assert(!(cmd->ps_type & PS_BG));
+  assert(!(cmd->next->ps_type & PS_BG));
+  cmd = parse(strdup(s9));
+  assert(cmd->next);
+  assert(cmd->next->next);
+  assert(!(cmd->ps_type & PS_PIPE));
+  assert(!(cmd->next->ps_type & PS_PIPE));
+  assert(!(cmd->next->next->ps_type & PS_PIPE));
   return 0;
 }

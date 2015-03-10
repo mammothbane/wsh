@@ -8,13 +8,14 @@
 
 typedef struct job {
   int pid;
-  command_t *list;
+  char* name;
   struct job *next;
 } job_t;
 
 void jt_init(void); //initialize the job table
-int jb_create(command_t*, int pid); //return job number
-void jb_kill(job_t**);
+int jb_create(char* name, int pid); //return job number
+void jb_kill(int);
+void jb_complete(int);
 void jt_print(void);
 void jt_free(void);
 

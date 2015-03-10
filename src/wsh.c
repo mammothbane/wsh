@@ -21,7 +21,7 @@ int main(int argc, char **argv) {
 	} else if (bi == BUILTIN_OTHER) {
 	  
 	} else {
-	  list = execute(list, 0);
+	  list = execute(list);
 	}
 
 	if (list->next) list = list->next;
@@ -29,6 +29,6 @@ int main(int argc, char **argv) {
       } while (1);
     }    
   } 
-
+  jt_free();
   return 0;
 }

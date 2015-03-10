@@ -10,7 +10,8 @@
 #include "command.h"
 #include "debug.h"
 #include "redirect.h"
+#include "job.h"
 
-command_t* execute(command_t*, int fdin);
+command_t* execute(command_t*);
 
 #endif

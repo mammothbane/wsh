@@ -22,7 +22,7 @@ int builtin(command_t *cmd) {
     puts("\texit\texit the shell");  
     return BUILTIN_OTHER;
   } else if (!strcmp(nm, "jobs")) {
-    
+    jt_print();
     return BUILTIN_OTHER;
   } else if (!strcmp(nm, "kill")) {
     
