@@ -42,7 +42,7 @@ void fd_close(fdpair pair) {
   if (pair.out > 0) {
     err = close(pair.out);
     if (err) {
-      perror("fd_close(in)");
+      perror("fd_close(out)");
       exit(err);
     }
   }

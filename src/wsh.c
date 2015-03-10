@@ -6,6 +6,7 @@
 #define PROMPT "$ - "
 
 int main(int argc, char **argv) {
+  jt_init();
   char *line;
   command_t *list;
   while ((line = readline(PROMPT))) {
@@ -18,12 +19,9 @@ int main(int argc, char **argv) {
 	} else if (bi == BUILTIN_CD) {
 	  
 	} else if (bi == BUILTIN_OTHER) {
-
+	  
 	} else {
-	  fdpair fds = fd_open(list);
-	  int status, pid = execute(list);
-	  wait(&status);
-	  fd_close(fds);
+	  list = execute(list, 0);
 	}
 
 	if (list->next) list = list->next;

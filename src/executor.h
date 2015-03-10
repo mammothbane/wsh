@@ -5,10 +5,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include "command.h"
 #include "debug.h"
 #include "redirect.h"
 
-int execute(command_t*);
+command_t* execute(command_t*, int fdin);
 
 #endif
