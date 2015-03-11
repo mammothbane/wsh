@@ -14,8 +14,9 @@ command_t* execute(command_t *command) {
  * return the last command processed
  */
 command_t* execute_internal(command_t *command, int fdin, int parent) {
+  printf("in file descriptor is %d\n", fdin);
   //pre: command not null, valid first entry
-  int fdpipe[2] = {fdin, 0};
+  int fdpipe[2];
   command_t* ret = command;
   while (ret->next && (ret->ps_type & PS_PIPE)) ret = ret->next;
   fdpair pair;
@@ -27,9 +28,9 @@ command_t* execute_internal(command_t *command, int fdin, int parent) {
     
     //call piped command recursively if necessary
     if (command->next && (command->ps_type & PS_PIPE)) { 
-      printf("pipe: %s -> %s\n", command->command[0], command->next->command[0]);
       pipe(fdpipe);
-      execute_internal(command->next, fdpipe[1], 1);
+      printf("pipe: %s[%d] -> [%d]%s\n", command->command[0], fdpipe[1], fdpipe[0], command->next->command[0]);
+      execute_internal(command->next, fdpipe[0], 1);
     }
 
     //set file descriptors for child
@@ -38,17 +39,17 @@ command_t* execute_internal(command_t *command, int fdin, int parent) {
       close(pair.out);
       pair.out = fdpipe[1];
     }
-    if (fdpipe[0]) {
-      close(pair.in);
-      pair.in = fdpipe[0];
+    if (fdin) {
+     close(pair.in);
+     pair.in = fdin;
     }
-    debug_print("in: %d, out: %d\n", pair.in, pair.out);
-    if (pair.in) dup2(pair.in, 0);
-    if (pair.out) dup2(pair.out, 1);
+    printf("[%s] in: %d, out: %d\n", command->command[0], pair.in, pair.out);
+    if (pair.in >= 0) dup2(pair.in, 0);
+    if (pair.out >= 0) dup2(pair.out, 1);
 
     //execute the command
     debug_print("child %d spawned\n", getpid());
-    debug_print("executing %s\n", command->command[0]);
+    printf("executing %s\n", command->command[0]);
     execvp(command->command[0], command->command);
     int err = errno;
     if (errno == 2) fprintf(stderr, "%s: command not found.\n", command->command[0]);
@@ -60,13 +61,15 @@ command_t* execute_internal(command_t *command, int fdin, int parent) {
     perror(NULL);
     exit(EXIT_FAILURE);
   } else {
-    cpid = pid;
-    if (command->ps_type & PS_BG) {
-      //debug_print("creating job\n");
-      jb_create(command->command[0], pid);
-    } else {
-      wait(NULL);
-    }
+    if (!parent) {
+      if (command->ps_type & PS_BG) {
+	//debug_print("creating job\n");
+	jb_create(command->command[0], pid);
+      } else {
+	cpid = pid;
+	wait(NULL);
+      }
+    } 
     return ret;
-  }
+   }
 }
