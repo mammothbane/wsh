@@ -5,7 +5,6 @@
 
 static int l_size = 8;
 static job_t **array; //job handles
-static void jb_print(job_t* job, int index);
 
 void jt_init(void) {
   array = calloc(sizeof(job_t*), l_size);
@@ -29,15 +28,17 @@ int jb_create(char *name, int pid) {
   job_t* job = malloc(sizeof(job_t));
   job->pid = pid;
   job->name = name;
+  printf("creating job %s with pid %d\n", name, pid);
   array[index] = job;
   return index;
 }
 
-//finish this:
 void jb_kill(int job) {
-  //pre: job is a handle to a job
-  //send sigkill
-  jb_complete(job);
+  if (array[job]) {
+    if (kill(array[job]->pid, SIGINT) < 0) {
+      perror("KILL");
+    }
+  }
 }
 
 void jb_complete(int job) {
@@ -49,13 +50,19 @@ void jt_print(void) {
   int i;
   for (i = 0; i < l_size; i++) {
     if (array[i]) {
-      jb_print(array[i], i);
+      printf("[%d] %s\n", i, array[i]->name);
     }
   }
 }
 
-void jb_print(job_t* job, int index) {
-  printf("[%d] %s\n", index, job->name);
+void jt_update(void) {
+  int i, status;
+  for (i = 0; i < l_size; i++) {
+    if (array[i] && waitpid(array[i]->pid, &status, WNOHANG) == -1) { 
+      jb_complete(i);
+      printf("[%d] %s\n", i, (WIFSIGNALED(status)) ? "terminated" : "finished");
+    }
+  }
 }
 
 void jt_free(void) {

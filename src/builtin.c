@@ -25,7 +25,7 @@ int builtin(command_t *cmd) {
     jt_print();
     return BUILTIN_OTHER;
   } else if (!strcmp(nm, "kill")) {
-    
+    jb_kill(atoi(cmd->command[1]));
     return BUILTIN_OTHER;
   }
   else return NOT_BUILTIN;
