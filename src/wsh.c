@@ -5,7 +5,12 @@
 
 #define PROMPT "$ - "
 
+static void catch_int();
+
+struct sigaction def = { .sa_handler = SIG_IGN };
+
 int main(int argc, char **argv) {
+  sigaction(SIGINT, &def, NULL);
   jt_init();
   char *line;
   command_t *list;
@@ -32,3 +37,7 @@ int main(int argc, char **argv) {
   jt_free();
   return 0;
 }
+
+//void catch_int() {
+//printf("caught an interrupt. terminating process %d if it exists\n", cpid);
+//}

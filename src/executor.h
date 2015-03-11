@@ -7,6 +7,7 @@
 #include <errno.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#include <signal.h>
 #include "command.h"
 #include "debug.h"
 #include "redirect.h"

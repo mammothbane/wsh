@@ -46,26 +46,16 @@ void jb_complete(int job) {
 }
 
 void jt_print(void) {
-  int i, j = 0;
+  int i;
   for (i = 0; i < l_size; i++) {
     if (array[i]) {
-      j++;
-      jb_print(array[i], j);
+      jb_print(array[i], i);
     }
   }
 }
 
 void jb_print(job_t* job, int index) {
-  command_t *cmd = job->list;
-  printf("[%d] %s\n", index);
-  while (cmd) {
-    printf("%s ", cmd->command[0]); 
-    if (cmd->ps_type & PS_PIPE) {
-      fputs("| ", stdout);
-      cmd = cmd->next; 
-    }
-  }
-  putchar('\n');
+  printf("[%d] %s\n", index, job->name);
 }
 
 void jt_free(void) {

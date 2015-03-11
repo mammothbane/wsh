@@ -4,10 +4,15 @@
 #include "executor.h"
 
 static command_t* execute_internal(command_t*, int, int);
+static void catch_int();
 
 command_t* execute(command_t *command) {
   return execute_internal(command, 0, 0); 
 }
+
+struct sigaction sigint = { .sa_handler = catch_int };
+
+int cpid = 0;
 
 /*
  * fdin and parent are used for recursive calls. set to 0 externally.
@@ -21,8 +26,7 @@ command_t* execute_internal(command_t *command, int fdin, int parent) {
   fdpair pair;
   int pid = fork();
   if (!pid) {
-    int jb_num = -1;
-    if (command->ps_type & PS_BG) jb_num = jb_create(command, getpid());
+
     printf("[%s:%d] read: %d, write: %d, next: %p\n", command->command[0], getpid(), fdpipe[0], fdpipe[1], command->next);
     
     //call piped command recursively if necessary
@@ -46,9 +50,13 @@ command_t* execute_internal(command_t *command, int fdin, int parent) {
     if (pair.in) dup2(pair.in, 0);
     if (pair.out) dup2(pair.out, 1);
 
-    //fork a new child to wait for the process
-    int cpid = fork();
+    //register SIGINT handler if this is a foreground process
+    if (!(command->ps_type & PS_BG)) {
+      sigaction(SIGINT, &sigint, NULL);
+    }
+
     if (!cpid) { //in the second child. run exec here.
+      printf("child %d spawned\n", getpid());
       debug_print("executing %s\n", command->command[0]);
       execvp(command->command[0], command->command);
       //debug_print("errno is: %d\n", errno);
@@ -56,26 +64,39 @@ command_t* execute_internal(command_t *command, int fdin, int parent) {
       if (errno == 2) fprintf(stderr, "%s: command not found.\n", command->command[0]);
       else perror(NULL);
       debug_print("errno: %d\n", err);
-      exit(1);
-    } else if (pid < 0) {
+      exit(EXIT_FAILURE);
+
+    } else if (cpid < 0) {
       perror(NULL);
-      if (command->ps_type & PS_BG) jb_complete(jb_num);
-      exit(cpid);
+      //if (command->ps_type & PS_BG) jb_complete(jb_num);
+      exit(EXIT_FAILURE);
+      
     } else { //we're in the first child
       wait(NULL); //wait for the command to finish executing
+      printf("[%d] wait complete for child %d. closing file descriptors: in = %d, out = %d\n", getpid(), cpid, pair.in, pair.out);
       fd_close(pair);
-      if (command->ps_type & PS_BG) jb_complete(jb_num);
-      return 0;
+      //if (command->ps_type & PS_BG) jb_complete(jb_num);
+      exit(EXIT_SUCCESS);
     }
   } else if (pid < 0) { //fork failed
     perror(NULL);
-    exit(pid);
+    exit(EXIT_FAILURE);
   } else {
+    printf("creating job\n");
+    jb_create(command->command[0], pid);
     if (command->ps_type & PS_BG) {
       printf("return from execute\n");
     } else {
       wait(NULL);
     }
     return ret;
+  }
+}
+
+
+void catch_int() {
+  printf("caught an interrupt. terminating process %d if it exists\n", cpid);
+  if (cpid) {
+    kill(SIGINT, cpid);
   }
 }
