@@ -8,6 +8,5 @@
 #include <string.h>
 
 command_t *parse(char*); //parse string read in 
-void cmd_free(command_t*);
 
 #endif

@@ -43,7 +43,6 @@ int main(int argc, char **argv) {
 }
 
 void catch_int() {
-  debug_print("caught an interrupt. terminating process %d if it exists\n", cpid);
   if (cpid) {
     if (kill(cpid, SIGINT) < 0) {
       perror("ctrl-c");

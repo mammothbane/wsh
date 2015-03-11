@@ -13,6 +13,9 @@ int builtin(command_t *cmd) {
   char* nm = cmd->command[0];
   if (!strcmp(nm, "exit")) return BUILTIN_EXIT;
   else if (!strcmp(nm, "cd")) {
+    if (cmd->command[1]) 
+      if (chdir(cmd->command[1])) perror(NULL);
+    
     return BUILTIN_CD;
   } else if (!strcmp(nm, "help")) {
     puts("builtin commands:\n\thelp\tthis help page");

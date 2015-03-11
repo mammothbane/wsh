@@ -28,7 +28,6 @@ int jb_create(char *name, int pid) {
   job_t* job = malloc(sizeof(job_t));
   job->pid = pid;
   job->name = name;
-  printf("creating job %s with pid %d\n", name, pid);
   array[index] = job;
   return index;
 }
