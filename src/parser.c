@@ -12,6 +12,14 @@ const char PS_FG = 0x0,
 //return list of commands terminated by 0x0
 command_t *parse(char *line) {
   command_t *head = 0, *cmd = 0;
+  
+  //terminate the line at the first space-preceeded hashmark
+  char *hash = strpbrk(line, "#");
+  if (hash > line) {
+    while (*(hash - 1) != ' ' && hash) hash = strpbrk(hash, "#");
+    if (hash) *(hash - 1) = '\0';
+  } else if (hash == line) return 0;
+  
   while (*line) {
     char *pt = strpbrk(line, ";\n#&|");
     char div = (pt) ? *pt : 0;
