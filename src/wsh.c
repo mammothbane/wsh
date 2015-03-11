@@ -5,12 +5,14 @@
 
 #define PROMPT "$ - "
 
+int cpid = 0;
+
 static void catch_int();
 
-struct sigaction def = { .sa_handler = SIG_IGN };
+struct sigaction intr = { .sa_handler = catch_int };
 
 int main(int argc, char **argv) {
-  sigaction(SIGINT, &def, NULL);
+  sigaction(SIGINT, &intr, NULL);
   jt_init();
   char *line;
   command_t *list;
@@ -26,22 +28,25 @@ int main(int argc, char **argv) {
 	} else if (bi == BUILTIN_OTHER) {
 	  
 	} else {
-	  //debug_print("[wsh]running execute\n");
 	  list = execute(list);
-	  //debug_print("[wsh]return from execute\n");
+	  cpid = 0;
 	}
 
 	if (list->next) list = list->next;
 	else break;
       } while (1);
     }
-    //debug_print("running update\n");
     jt_update();
   } 
   jt_free();
   return 0;
 }
 
-//void catch_int() {
-//  printf("caught an interrupt. terminating process %d if it exists\n", cpid);
-//}
+void catch_int() {
+  debug_print("caught an interrupt. terminating process %d if it exists\n", cpid);
+  if (cpid) {
+    if (kill(cpid, SIGINT) < 0) {
+      perror("ctrl-c");
+    }
+  }
+}

@@ -4,15 +4,10 @@
 #include "executor.h"
 
 static command_t* execute_internal(command_t*, int, int);
-static void catch_int();
 
 command_t* execute(command_t *command) {
   return execute_internal(command, 0, 0); 
 }
-
-struct sigaction sigint = { .sa_handler = catch_int };
-
-int cpid = 0;
 
 /*
  * fdin and parent are used for recursive calls. set to 0 externally.
@@ -65,6 +60,7 @@ command_t* execute_internal(command_t *command, int fdin, int parent) {
     perror(NULL);
     exit(EXIT_FAILURE);
   } else {
+    cpid = pid;
     if (command->ps_type & PS_BG) {
       //debug_print("creating job\n");
       jb_create(command->command[0], pid);
@@ -72,13 +68,5 @@ command_t* execute_internal(command_t *command, int fdin, int parent) {
       wait(NULL);
     }
     return ret;
-  }
-}
-
-
-void catch_int() {
-  printf("caught an interrupt. terminating process %d if it exists\n", cpid);
-  if (cpid) {
-    kill(cpid, SIGINT);
   }
 }

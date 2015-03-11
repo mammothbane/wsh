@@ -1,6 +1,8 @@
 #ifndef COMMAND_H
 #define COMMAND_H
 
+extern int cpid;
+
 extern const char PS_FG,
   PS_BG,
   PS_PIPE,
