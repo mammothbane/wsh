@@ -2,11 +2,6 @@
 #define BUILTIN_H
 
 #include "command.h"
-#include "debug.h"
-#include "job.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 extern const int BUILTIN_EXIT, 
   BUILTIN_CD,

@@ -6,7 +6,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "debug.h"
 #include "parser.h"
+
+/**
+ * Command flags.
+ * PS_FG    foreground
+ * PS_BG    background
+ * PS_PIPE  out piped to another command
+ * PS_IN    has in redirect
+ * PS_OUT   has out redirect
+ */
+const ps_type_t 
+	PS_FG = 0x0,
+  	PS_BG = 0x1,
+  	PS_PIPE = 0x2,
+  	PS_IN = 0x4,
+  	PS_OUT = 0x8;
 
 // read and parse a line, returning a null-terminated list of commands.
 command_t* parse(char *line) {
@@ -18,7 +35,7 @@ command_t* parse(char *line) {
 	// ignore this line if the first character was a hashmark.
 	if (hash == line) return 0;
 	
-	while (*(hash - 1) != ' ' && hash) 
+	while (hash && *(hash - 1) != ' ')
 		hash = strpbrk(hash, "#");
 
 	if (hash) *(hash - 1) = '\0';
@@ -30,7 +47,6 @@ command_t* parse(char *line) {
 		// interpret NULL as \0, otherwise pick out the 
 		char div = (pt) ? *pt : 0;
 		
-
 		if (cmd) {
 			cmd->next = calloc(sizeof(command_t), 1);
 			cmd = cmd->next;
@@ -48,13 +64,13 @@ command_t* parse(char *line) {
 
 				char *file = strsep(&com, " ");
 				if (io == '<') {
-					//set infile
+					// set infile
 					debug_print("\tinfile to '%s'\n", file);
 					cmd->in = strdup(file);
 					cmd->ps_type |= PS_IN;
 
 				} else {
-	  				//set outfile
+	  				// set outfile
 					debug_print("\toutfile to '%s'\n", file);
 					cmd->out = strdup(file);
 					cmd->ps_type |= PS_OUT;
@@ -63,7 +79,6 @@ command_t* parse(char *line) {
 				
 				if (com) {
 					com = strcat(pre, com);
-					//com = strcat(strcat(pre, " "), com);
 				} else com = pre;
 
 				debug_print("\tpost com: '%s'\n", com);
@@ -92,17 +107,19 @@ command_t* parse(char *line) {
 		}
 		if (div) {
 			switch (div) {
+				// any of these terminate the command
 				case '\n':
 				case ';':
 				case '#':
-				cmd->ps_type &= ~PS_BG;
-				break;
+					cmd->ps_type &= ~PS_BG;
+					break;
+				// this terminates but makes it a job
 				case '&':
-				cmd->ps_type |= PS_BG;
-				break;
+					cmd->ps_type |= PS_BG;
+					break;
 				case '|':
-				cmd->ps_type |= PS_PIPE;
-				break;
+					cmd->ps_type |= PS_PIPE;
+					break;
 			}      
 		} else break;
 	}

@@ -1,9 +1,6 @@
 #ifndef JOB_H
 #define JOB_H
 
-#include "debug.h"
-#include "command.h"
-
 typedef struct job {
   int pid;
   char* name;

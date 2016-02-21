@@ -1,34 +1,26 @@
-CC=gcc
-CFLAGS=-Wall -g
-OUT=bin/wsh
-_OBJS = parser.o builtin.o executor.o redirect.o job.o
-_ROBJS = wsh.o
-OBJS = $(patsubst %,$(OBJDIR)/%,$(_OBJS))
-ROBJS = $(patsubst %,$(OBJDIR)/%,$(_ROBJS))
-SRCDIR = src
-OBJDIR = objs
-TESTDIR = test
-TESTBIN = test/bin
-TESTS = parsetest
+CC = gcc
+CFLAGS = -Wall -g
+SRC = src
+OBJ = obj
+OBJS = $(patsubst $(SRC)/%.c,$(OBJ)/%.o,$(wildcard $(SRC)/*.c))
 
-$(OUT): $(OBJS) $(ROBJS)
+.PHONY: test clean all
+
+all: bin/wsh
+
+bin/wsh: $(OBJS)
+	@mkdir -p bin
 	@echo [Compile]'\t'$@
-	@$(CC) $(CFLAGS) $(OBJS) $(ROBJS) -o $(OUT) -lreadline
+	@$(CC) $(CFLAGS) $(OBJS) -o $@ -lreadline
 
-$(ROBJS): EXTRAFLAGS = -lreadline
-
-$(OBJDIR)/%.o: $(SRCDIR)/%.c
+$(OBJ)/%.o: $(SRC)/%.c $(wildcard $(SRC)/*.h)
+	@mkdir -p $(OBJ)
 	@echo [Compile]'\t'$< \> $@ 
-	@$(CC) $(CFLAGS) -c -o $@ $< $(EXTRAFLAGS)
-	@$(CC) -MM $(CFLAGS) $< > $(OBJDIR)/$*.d 
+	@$(CC) $(CFLAGS) -c -o $@ $<
 
-.PHONY: test
 test:
-	@cd $(TESTDIR); make $(MFLAGS)
+	@cd test; make $(MFLAGS)
 
-.PHONY: clean
 clean:
-	@rm -f $(OBJDIR)/*.o $(OUT) $(OBJDIR)/*.d
-	@cd $(TESTDIR); make $(MFLAGS) clean
-
--include $(OBJS:.o=.d) $(ROBJS:.o=.d)
+	@rm -rf $(OBJ) bin/wsh
+	@cd test; make $(MFLAGS) clean
