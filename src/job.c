@@ -1,6 +1,12 @@
-//background job implementation
-//(c) 2015 nathan m perry
+// background jobs
+// (c) 2015-2016 Nathan M. Perry
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <signal.h>
+#include <unistd.h>
 #include "job.h"
 
 static int l_size = 8;
@@ -22,6 +28,7 @@ int jb_create(char *name, int pid) {
   if (index == l_size) {
     l_size *= 2;
     array = realloc(array, l_size*sizeof(job_t*));
+    memset(array, );
     int j;
     for (j = index; j < l_size; j++) array[j] = NULL; //realloc doesn't zero
   }
