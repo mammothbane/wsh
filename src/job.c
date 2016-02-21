@@ -18,7 +18,7 @@ void jt_init(void) {
 	array = calloc(sizeof(job_t*), l_size);
 }
 
-int jb_create(char *name, int pid) {
+int jb_create(char *name, pid_t pid) {
 	int index = l_size;
 	int i;
 	for (i = 0; i < l_size; i++) {

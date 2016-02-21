@@ -21,9 +21,11 @@ command_t* execute(command_t *command) {
 	return execute_internal(command, 0, 0); 
 }
 
-/*
+/**
  * fdin and parent are used for recursive calls. set to 0 externally.
- * return the last command processed
+ * parent indicates whether this call is recursive. fdin is the file
+ * descriptor that the command should read from (for use with pipes).
+ * returns the last command processed.
  */
 command_t* execute_internal(command_t *command, int fdin, int parent) {
 	debug_print("in file descriptor is %d\n", fdin);
@@ -34,7 +36,7 @@ command_t* execute_internal(command_t *command, int fdin, int parent) {
 	while (ret->next && (ret->ps_type & PS_PIPE)) ret = ret->next;
 	fdpair pair;
 
-	int pid = fork();
+	pid_t pid = fork();
 
 	// we're the child
 	if (!pid) {
